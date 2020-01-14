@@ -16,39 +16,35 @@ Peg.prototype.changePeg = function(state) {
 var board = [];
 // Main game state
 function Main() {
-    board = buildBoard(5)
+    size = 4
+    board = buildBoard(size)
     SetNeighbors()
 
-    var ranX = Math.floor(Math.random() * 5)
+    var ranX = Math.floor(Math.random() * size)
     var ranY = Math.floor(Math.random() * ranX)
 
-    Start(ranX, ranY)
+    SetEmptyPeg(ranX, ranY)
 
     // Logic for displaying the board
     board.forEach(function(row) {
         var display = ""
         row.forEach(function(aPeg) {
-                display = display + " " + aPeg.isFilled
-            })
-            //console.log(display)
+            display = display + " " + aPeg.isFilled
+        })
     })
 }
 
-function Start(emptyX, emptyY) {
-    // Set beginning empty peg
+// Set beginning empty peg
+function SetEmptyPeg(emptyX, emptyY) {
     board[emptyX][emptyY].changePeg(false)
 }
 
 function SetNeighbors() {
     // Add neighbors
-    board.forEach(function(row) {
-        var display = ""
-        row.forEach(function(me) {
-            display = display + " " + me.isFilled
-
-            //console.log(me)
-            var x = me.cord[0]
-            var y = me.cord[1]
+    for (var x = 0; x < board.length; x++) {
+        for (var y = 0; y < board[x].length; y++) {
+            // Current peg
+            var me = board[x][y]
 
             var neighbors = [
                 [x - 1, y - 1],
@@ -57,25 +53,29 @@ function SetNeighbors() {
                 [x, y + 1],
                 [x + 1, y],
                 [x + 1, y + 1]
-            ]
+            ];
 
-            //console.log(neighbors)
+            // Go through each neighbor and add it if it's a valid reference
             neighbors.forEach(function(cord) {
                 try {
-                    me.addNeighbor(board[cord[0], cord[1]])
+                    var ref = board[cord[0]][cord[1]]
+                        // Make sure not to add false reference
+                    if (ref == undefined) {} else {
+                        me.addNeighbor(ref)
+                    }
                 } catch (e) {}
             })
-        })
-        console.log(board[1])
-    })
+        }
+    }
+    console.log(board)
 }
 
 // Builds board and inserts nodes with cords
 function buildBoard(size) {
     board = [];
-    for (var i = 1; i <= size; i++) {
+    for (var i = 0; i <= size; i++) {
         arr = [];
-        for (var j = 1; j <= i; j++) {
+        for (var j = 0; j <= i; j++) {
             var peg = new Peg()
             peg.setCord([i, j])
             arr.push(peg);
